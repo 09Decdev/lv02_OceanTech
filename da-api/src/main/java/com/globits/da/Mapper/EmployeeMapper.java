@@ -51,12 +51,13 @@ public class EmployeeMapper {
            employee.setCommune(commune);
        }
 
-       if (dto.getCertificateIds()!=null&&dto.getCertificateIds().isEmpty()) {
-           List<Certificate> certificates = certificateRepository.findAllById(dto.getCertificateIds());
-           employee.setCertificate(certificates);
-       }
+        if (dto.getCertificateIds() != null && !dto.getCertificateIds().isEmpty()) {
+            List<Certificate> certificates = certificateRepository.findAllById(dto.getCertificateIds());
+            employee.setCertificate(certificates);
+        }
 
-       return employee;
+
+        return employee;
    }
 
    public void updateEntity(Employee employee, EmployeeRequestDto dto) {

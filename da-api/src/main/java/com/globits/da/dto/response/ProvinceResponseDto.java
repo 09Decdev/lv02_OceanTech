@@ -1,5 +1,7 @@
 package com.globits.da.dto.response;
 
+import com.globits.da.domain.entity.Province;
+
 import java.util.List;
 //@Getter
 //@Setter
@@ -19,6 +21,7 @@ public class ProvinceResponseDto {
         this.name = name;
         this.districts = districts;
     }
+
 
     public Long getId() {
         return id;

@@ -1,6 +1,7 @@
 package com.globits.da.domain.entity;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -38,8 +39,8 @@ public class Employee {
     @JoinColumn(name = "commune_id",nullable = false)
     private Commune commune;
 
-    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Certificate> certificate;
+    @OneToMany(mappedBy = "employee",fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<Certificate> certificate=new ArrayList<>();
 
     public Employee() {
     }

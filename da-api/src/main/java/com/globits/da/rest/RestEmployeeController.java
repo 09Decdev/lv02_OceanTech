@@ -6,12 +6,14 @@ import com.globits.da.dto.EmployeeDto;
 import com.globits.da.dto.request.EmployeeRequestDto;
 import com.globits.da.dto.response.ApiResponse;
 import com.globits.da.dto.response.EmployeeResponseDto;
+import com.globits.da.dto.response.ImportError;
 import com.globits.da.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -38,8 +40,8 @@ public class RestEmployeeController {
     public ApiResponse<EmployeeResponseDto> saveEmployee( @Valid @RequestBody EmployeeRequestDto dto){
         ApiResponse<EmployeeResponseDto>result=new ApiResponse<>();
         Employee employee = employeeMapper.toEntity(dto);
-        EmployeeResponseDto employeeResponseDto=employeeMapper.toDto(employee);
-        result.setData(employeeResponseDto);
+        employee = employeeService.save(employee);
+        result.setData(employeeMapper.toDto(employee));
         result.setMessage("Success");
 
         return result;
@@ -48,7 +50,7 @@ public class RestEmployeeController {
     @PutMapping("/{id}")
     public ApiResponse<EmployeeResponseDto>updateEmployee(@Valid @RequestBody EmployeeRequestDto dto, @PathVariable Long id){
         ApiResponse<EmployeeResponseDto>result=new ApiResponse<>();
-        Employee employee=employeeService.updateEmployee(id,dto);
+        Employee employee = employeeService.updateEmployee(id,dto);
         result.setData(employeeMapper.toDto(employee));
         result.setMessage("Successfully updated");
 
@@ -72,5 +74,15 @@ public class RestEmployeeController {
         result.setData(employeeService.addCertificate(employeeId, certificateIds));
         return result;
     }
+
+    @PostMapping("/import-employees")
+    public ResponseEntity<?> importExcel(@RequestParam("file") MultipartFile file) {
+        List<ImportError> errors = employeeService.importEmployeesFromExcel(file);
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(errors);
+        }
+        return ResponseEntity.ok("Import thành công!");
+    }
+
 
 }

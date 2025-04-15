@@ -8,8 +8,10 @@ import com.globits.da.dto.request.CertificateRequestDto;
 import com.globits.da.dto.request.EmployeeRequestDto;
 import com.globits.da.dto.response.CertificateResponseDto;
 import com.globits.da.dto.response.EmployeeResponseDto;
+import com.globits.da.dto.response.ImportError;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -20,4 +22,5 @@ public interface EmployeeService extends GenericService<Employee, Long> {
      Employee updateEmployee(Long id,EmployeeRequestDto dto);
      Boolean deleteEmployee(Long id);
      EmployeeResponseDto addCertificate(Long id, List<Long> certificateIds);
+     List<ImportError> importEmployeesFromExcel(MultipartFile file);
 }

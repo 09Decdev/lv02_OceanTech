@@ -2,10 +2,11 @@ package com.globits.da.domain.Validate;
 
 import com.globits.da.repository.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
+@Component
 public class UniqueEmployeeCodeValidator implements ConstraintValidator<UniqueEmployeeCode,String> {
     @Autowired
     private EmployeeRepository employeeRepository;

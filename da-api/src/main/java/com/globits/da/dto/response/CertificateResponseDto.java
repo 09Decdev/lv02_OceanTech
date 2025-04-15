@@ -1,6 +1,7 @@
 package com.globits.da.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.globits.da.domain.entity.Certificate;
 import com.globits.da.domain.entity.Province;
 
 import java.time.LocalDate;
@@ -22,6 +23,14 @@ public class CertificateResponseDto {
 
     public CertificateResponseDto() {
 
+    }
+
+    public CertificateResponseDto(Certificate certificate) {
+        this.id = certificate.getId();
+        this.name = certificate.getName();
+        this.issuingOrganization = certificate.getIssuingOrganization();
+        this.issueDate = certificate.getIssueDate();
+        this.expiryDate = certificate.getExpiryDate();
     }
 
     public ProvinceResponseDto getProvinceDto() {
