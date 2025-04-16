@@ -99,3 +99,4 @@ public class ProvinceServiceImpl extends GenericServiceImpl<Province, Long> impl
     }
 
 }
+
