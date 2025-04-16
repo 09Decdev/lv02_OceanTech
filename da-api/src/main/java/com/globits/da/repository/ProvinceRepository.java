@@ -9,6 +9,5 @@ public interface ProvinceRepository extends JpaRepository<Province, Long> {
     Province findOneByName(String name);
     Province findOneByCodeAndName(String code, String name);
     Province findOneByCodeOrName(String code, String name);
-
-    Long id(Long id);
+    boolean existsByCode(String code);
 }

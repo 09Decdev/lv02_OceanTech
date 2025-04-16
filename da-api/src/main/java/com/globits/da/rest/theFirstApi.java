@@ -22,61 +22,61 @@ public class theFirstApi {
     private MyFirstApiService myFirstApiService;
 
     @GetMapping
-    public String firstGet(){
+    public String firstGet() {
         return myFirstApiService.myFirstApi();
     }
 
-//    @PostMapping("creat")
+    //    @PostMapping("creat")
 //    public MyFirstApiDto firstApiDto(@RequestBody MyFirstApiDto dto){
 //        return dto;
 //    }
     @PostMapping("creat")
     public MyFirstApiDto firstApiDto(@RequestParam Integer code,
                                      @RequestParam String name,
-                                     @RequestParam int age){
-        return new MyFirstApiDto(code,name,age);
+                                     @RequestParam int age) {
+        return new MyFirstApiDto(code, name, age);
     }
 
-        @PostMapping("/uploadFile")
-        public String uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
-            StringBuilder result = new StringBuilder();
+    @PostMapping("/uploadFile")
+    public String uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
+        StringBuilder result = new StringBuilder();
 
-            // Kiểm tra loại file là text hay Excel
-            String fileName = file.getOriginalFilename();
-            if (fileName.endsWith(".txt")) {
-                // Đọc file text
-                String content = new String(file.getBytes());
-                result.append("Dòng trong file text: \n");
-                for (String line : content.split("\n")) {
-                    System.out.println(line); // Debug mỗi dòng của file
-                    result.append(line).append("\n");
-                }
-            } else if (fileName.endsWith(".xlsx")) {
-                // Đọc file Excel
-                InputStream inputStream = file.getInputStream();
-                Workbook workbook = new XSSFWorkbook(inputStream);
-                Sheet sheet = workbook.getSheetAt(0); // Lấy sheet đầu tiên
-                Iterator<Row> rowIterator = sheet.iterator();
-
-                result.append("Dòng trong file Excel: \n");
-                while (rowIterator.hasNext()) {
-                    Row row = rowIterator.next();
-                    Iterator<Cell> cellIterator = row.cellIterator();
-
-                    while (cellIterator.hasNext()) {
-                        Cell cell = cellIterator.next();
-                        System.out.print(cell.toString() + "\t"); // Debug mỗi dòng trong Excel
-                        result.append(cell.toString()).append("\t");
-                    }
-                    System.out.println(); // Print newline for each row in Excel
-                    result.append("\n");
-                }
-                workbook.close();
-            } else {
-                return "Chỉ chấp nhận file .txt hoặc .xlsx";
+        // Kiểm tra loại file là text hay Excel
+        String fileName = file.getOriginalFilename();
+        if (fileName.endsWith(".txt")) {
+            // Đọc file text
+            String content = new String(file.getBytes());
+            result.append("Dòng trong file text: \n");
+            for (String line : content.split("\n")) {
+                System.out.println(line); // Debug mỗi dòng của file
+                result.append(line).append("\n");
             }
+        } else if (fileName.endsWith(".xlsx")) {
+            // Đọc file Excel
+            InputStream inputStream = file.getInputStream();
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            Sheet sheet = workbook.getSheetAt(0); // Lấy sheet đầu tiên
+            Iterator<Row> rowIterator = sheet.iterator();
 
-            return result.toString();
+            result.append("Dòng trong file Excel: \n");
+            while (rowIterator.hasNext()) {
+                Row row = rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+                    System.out.print(cell.toString() + "\t"); // Debug mỗi dòng trong Excel
+                    result.append(cell.toString()).append("\t");
+                }
+                System.out.println(); // Print newline for each row in Excel
+                result.append("\n");
+            }
+            workbook.close();
+        } else {
+            return "Chỉ chấp nhận file .txt hoặc .xlsx";
         }
+
+        return result.toString();
     }
+}
 

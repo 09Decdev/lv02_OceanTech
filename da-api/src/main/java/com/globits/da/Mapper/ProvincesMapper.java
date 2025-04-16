@@ -1,15 +1,12 @@
 package com.globits.da.Mapper;
 
 
-import com.globits.da.domain.entity.Commune;
 import com.globits.da.domain.entity.District;
 import com.globits.da.domain.entity.Province;
-import com.globits.da.dto.request.CommuneRequestDto;
 import com.globits.da.dto.request.DistrictRequestDto;
 import com.globits.da.dto.request.ProvinceRequestDto;
 import com.globits.da.dto.response.DistrictResponseDto;
 import com.globits.da.dto.response.ProvinceResponseDto;
-import com.globits.da.repository.DistrictRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,14 +39,14 @@ public class ProvincesMapper {
 
     public List<ProvinceResponseDto> toDtoList(List<Province> provinces) {
         if (provinces == null) {
-            return Collections.emptyList() ;
+            return Collections.emptyList();
         }
 
         List<ProvinceResponseDto> result = new ArrayList<>();
 
         for (Province province : provinces) {
             if (province != null) {
-              result.add(toDto(province));
+                result.add(toDto(province));
             }
         }
         return result;
@@ -68,7 +65,7 @@ public class ProvincesMapper {
         return dto;
     }
 
-    public  Province toEntity(ProvinceRequestDto dto) {
+    public Province toEntity(ProvinceRequestDto dto) {
         if (dto == null) {
             return null;
         }
@@ -78,8 +75,8 @@ public class ProvincesMapper {
 
         if (dto.getDistrictId() != null) {
             List<District> districts = new ArrayList<>();
-            for (DistrictRequestDto requestDistrictDto:dto.getDistrictId()){
-                District district=districtMapper.toEntity(requestDistrictDto);
+            for (DistrictRequestDto requestDistrictDto : dto.getDistrictId()) {
+                District district = districtMapper.toEntity(requestDistrictDto);
                 district.setProvince(province);
                 districts.add(district);
             }

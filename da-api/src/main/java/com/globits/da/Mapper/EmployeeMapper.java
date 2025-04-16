@@ -1,7 +1,6 @@
 package com.globits.da.Mapper;
 
 import com.globits.da.domain.entity.*;
-import com.globits.da.dto.EmployeeDto;
 import com.globits.da.dto.request.EmployeeRequestDto;
 import com.globits.da.dto.response.EmployeeResponseDto;
 import com.globits.da.repository.*;
@@ -28,28 +27,28 @@ public class EmployeeMapper {
     private CertificateMapper certificateMapper;
 
     public Employee toEntity(EmployeeRequestDto dto) {
-       if (dto == null) return null;
-       Employee employee = new Employee();
-       employee.setCode(dto.getCode());
-       employee.setName(dto.getName());
-       employee.setEmail(dto.getEmail());
-       employee.setPhone(dto.getPhone());
-       employee.setAge(dto.getAge());
+        if (dto == null) return null;
+        Employee employee = new Employee();
+        employee.setCode(dto.getCode());
+        employee.setName(dto.getName());
+        employee.setEmail(dto.getEmail());
+        employee.setPhone(dto.getPhone());
+        employee.setAge(dto.getAge());
 
-       if (dto.getDistrictId()!=null&&dto.getDistrictId()!=null&&dto.getCommuneId()!=null) {
-           Province province =provinceRepository.findById(dto.getProvinceId())
-                   .orElseThrow(()->new RuntimeException("Province not found with id: "+dto.getProvinceId()));
+        if (dto.getDistrictId() != null && dto.getDistrictId() != null && dto.getCommuneId() != null) {
+            Province province = provinceRepository.findById(dto.getProvinceId())
+                    .orElseThrow(() -> new RuntimeException("Province not found with id: " + dto.getProvinceId()));
 
-           District district = districtRepository.findById(dto.getDistrictId())
-                   .orElseThrow(()->new RuntimeException("District not found with id: "+dto.getDistrictId()));
+            District district = districtRepository.findById(dto.getDistrictId())
+                    .orElseThrow(() -> new RuntimeException("District not found with id: " + dto.getDistrictId()));
 
-           Commune commune = communeRepository.findById(dto.getCommuneId())
-                   .orElseThrow(()->new RuntimeException("Commune not found with id: "+dto.getCommuneId()));
+            Commune commune = communeRepository.findById(dto.getCommuneId())
+                    .orElseThrow(() -> new RuntimeException("Commune not found with id: " + dto.getCommuneId()));
 
-           employee.setProvince(province);
-           employee.setDistrict(district);
-           employee.setCommune(commune);
-       }
+            employee.setProvince(province);
+            employee.setDistrict(district);
+            employee.setCommune(commune);
+        }
 
         if (dto.getCertificateIds() != null && !dto.getCertificateIds().isEmpty()) {
             List<Certificate> certificates = certificateRepository.findAllById(dto.getCertificateIds());
@@ -58,10 +57,10 @@ public class EmployeeMapper {
 
 
         return employee;
-   }
+    }
 
-   public void updateEntity(Employee employee, EmployeeRequestDto dto) {
-        if (dto == null||employee==null) return;
+    public void updateEntity(Employee employee, EmployeeRequestDto dto) {
+        if (dto == null || employee == null) return;
 
         employee.setCode(dto.getCode());
         employee.setName(dto.getName());
@@ -69,54 +68,55 @@ public class EmployeeMapper {
         employee.setPhone(dto.getPhone());
         employee.setAge(dto.getAge());
 
-       if (dto.getDistrictId()!=null&&dto.getDistrictId()!=null&&dto.getCommuneId()!=null) {
-           Province province =provinceRepository.findById(dto.getProvinceId())
-                   .orElseThrow(()->new RuntimeException("Province not found with id: "+dto.getProvinceId()));
+        if (dto.getDistrictId() != null && dto.getDistrictId() != null && dto.getCommuneId() != null) {
+            Province province = provinceRepository.findById(dto.getProvinceId())
+                    .orElseThrow(() -> new RuntimeException("Province not found with id: " + dto.getProvinceId()));
 
-           District district = districtRepository.findById(dto.getDistrictId())
-                   .orElseThrow(()->new RuntimeException("District not found with id: "+dto.getDistrictId()));
+            District district = districtRepository.findById(dto.getDistrictId())
+                    .orElseThrow(() -> new RuntimeException("District not found with id: " + dto.getDistrictId()));
 
-           Commune commune = communeRepository.findById(dto.getCommuneId())
-                   .orElseThrow(()->new RuntimeException("Commune not found with id: "+dto.getCommuneId()));
+            Commune commune = communeRepository.findById(dto.getCommuneId())
+                    .orElseThrow(() -> new RuntimeException("Commune not found with id: " + dto.getCommuneId()));
 
-           employee.setProvince(province);
-           employee.setDistrict(district);
-           employee.setCommune(commune);
-       }
+            employee.setProvince(province);
+            employee.setDistrict(district);
+            employee.setCommune(commune);
+        }
 
-   }
+    }
 
-   public EmployeeResponseDto toDto(Employee employee) {
-        if (employee==null) return null;
+    public EmployeeResponseDto toDto(Employee employee) {
+        if (employee == null) return null;
         EmployeeResponseDto employeeResponseDto = new EmployeeResponseDto();
+        employeeResponseDto.setId(employee.getId());
         employeeResponseDto.setCode(employee.getCode());
         employeeResponseDto.setName(employee.getName());
         employeeResponseDto.setEmail(employee.getEmail());
         employeeResponseDto.setPhone(employee.getPhone());
         employeeResponseDto.setAge(employee.getAge());
-        if (employee.getProvince()!=null) {
+        if (employee.getProvince() != null) {
             employeeResponseDto.setProvinceName(employee.getProvince().getName());
-        }else {
+        } else {
             employeeResponseDto.setProvinceName(null);
         }
-        if (employee.getDistrict()!=null) {
+        if (employee.getDistrict() != null) {
             employeeResponseDto.setDistrictName(employee.getDistrict().getName());
-        }else {
+        } else {
             employeeResponseDto.setDistrictName(null);
         }
-        if (employee.getCommune()!=null) {
+        if (employee.getCommune() != null) {
             employeeResponseDto.setCommuneName(employee.getCommune().getName());
-        }else {
+        } else {
             employeeResponseDto.setCommuneName(null);
         }
-        if (employee.getCertificate()!=null&&!employee.getCertificate().isEmpty()){
+        if (employee.getCertificate() != null && !employee.getCertificate().isEmpty()) {
             employeeResponseDto.setCertificates(
                     employee.getCertificate().stream().map(certificateMapper::toDto).collect(Collectors.toList())
             );
-        }else {
+        } else {
             employeeResponseDto.setCertificates(Collections.emptyList());
         }
 
         return employeeResponseDto;
-   }
+    }
 }

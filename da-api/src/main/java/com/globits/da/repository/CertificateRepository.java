@@ -7,16 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 
 @Repository
-public interface CertificateRepository extends JpaRepository<Certificate, Long>  {
-boolean existsByNameAndProvince_IdAndEmployee_IdAndExpiryDateAfter(
-        String name,
-        Long provinceId,
-        Long employeeId,
-        LocalDate currentDate
-);
-    long countByNameAndEmployee_IdAndExpiryDateAfter(
-            String name,
-            Long employeeId,
-            LocalDate currentDate
-    );
+public interface CertificateRepository extends JpaRepository<Certificate, Long> {
 }

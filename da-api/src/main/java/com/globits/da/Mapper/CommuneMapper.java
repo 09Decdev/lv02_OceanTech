@@ -1,16 +1,14 @@
 package com.globits.da.Mapper;
 
-import com.globits.core.repository.DisciplineRepository;
 import com.globits.da.domain.entity.Commune;
 import com.globits.da.dto.request.CommuneRequestDto;
 import com.globits.da.dto.response.CommuneResponseDto;
-import com.globits.da.repository.CommuneRepository;
 import com.globits.da.repository.DistrictRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+
 @Component
 public class CommuneMapper {
 
@@ -21,7 +19,7 @@ public class CommuneMapper {
         this.districtRepository = districtRepository;
     }
 
-    public CommuneResponseDto toDto(Commune commune){
+    public CommuneResponseDto toDto(Commune commune) {
         if (commune == null) {
             return null;
         }
@@ -29,17 +27,17 @@ public class CommuneMapper {
         dto.setId(commune.getId());
         dto.setName(commune.getName());
         dto.setCode(commune.getCode());
-        dto.setDistrictId(commune.getDistrict()!=null?commune.getDistrict().getId():null);
+        dto.setDistrictId(commune.getDistrict() != null ? commune.getDistrict().getId() : null);
 
         return dto;
     }
 
-    public List<CommuneResponseDto> toDtoList(List<Commune> communes){
+    public List<CommuneResponseDto> toDtoList(List<Commune> communes) {
         if (communes == null) {
             return null;
         }
 
-        List<CommuneResponseDto> result=new ArrayList<>();
+        List<CommuneResponseDto> result = new ArrayList<>();
         for (Commune commune : communes) {
             if (commune != null) {
                 CommuneResponseDto dto = toDto(commune);
@@ -51,7 +49,7 @@ public class CommuneMapper {
         return result;
     }
 
-    public Commune toEntity(CommuneRequestDto dto){
+    public Commune toEntity(CommuneRequestDto dto) {
         if (dto == null) {
             return null;
         }

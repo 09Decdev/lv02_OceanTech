@@ -13,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Service
@@ -23,4 +24,6 @@ public interface EmployeeService extends GenericService<Employee, Long> {
      Boolean deleteEmployee(Long id);
      EmployeeResponseDto addCertificate(Long id, List<Long> certificateIds);
      List<ImportError> importEmployeesFromExcel(MultipartFile file);
+     Employee getEmployee(Long id);
+     List<Employee> getEmployees();
 }

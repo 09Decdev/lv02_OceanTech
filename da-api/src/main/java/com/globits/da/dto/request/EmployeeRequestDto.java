@@ -1,17 +1,14 @@
 package com.globits.da.dto.request;
 
-import com.globits.da.domain.Validate.UniqueEmployeeCode;
-import com.globits.da.domain.Validate.ValidEmployeeLocation;
-
+import javax.persistence.Column;
 import javax.validation.constraints.*;
 import java.util.List;
 
-@ValidEmployeeLocation
 public class EmployeeRequestDto {
     @NotBlank(message = "Code không được để trống")
     @Size(min = 6,max = 10,message = "Code phải có độ dài từ 6 đến 10 ký tự")
     @Pattern(regexp = "^\\S+$",message = "Code không được chứa khoảng trống")
-//    @UniqueEmployeeCode(message = "Code đã tồn tại")
+    @Column(unique = true)
     private String code;
 
     @NotBlank(message = "Tên không được để trống")

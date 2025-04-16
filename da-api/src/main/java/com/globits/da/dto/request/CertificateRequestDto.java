@@ -1,21 +1,17 @@
 package com.globits.da.dto.request;
 
-import com.globits.da.domain.Validate.ValidCertificateDates;
-
 import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.List;
 
-@ValidCertificateDates
 public class CertificateRequestDto {
-    @NotBlank(message = "Không được để trống teen văn bằng")
+    @NotBlank(message = "Không được để trống tên văn bằng")
     private String name;
 
     @NotBlank(message = "Không được để trống đơn vị cấp")
     private String issuingOrganization;
 
     @NotNull(message = "Không được để trống ngày cấp")
-    @PastOrPresent(message=" Ngày cấp không được là ngày ở tương lai" )// Tổ chức cấp
+    @PastOrPresent(message = "Ngày cấp không được là ngày ở tương lai") // Tổ chức cấp
     private LocalDate issueDate;
 
     @NotNull(message = "Không được để trống ngày hết hạn")
@@ -24,18 +20,11 @@ public class CertificateRequestDto {
 
     private Long provinceId;
 
-
-
-
     public CertificateRequestDto(String name, LocalDate expiryDate, LocalDate issueDate, String issuingOrganization) {
     }
 
     public CertificateRequestDto() {
     }
-
-    //    private Long employeeId;
-
-
 
     public Long getProvinceId() {
         return provinceId;
@@ -75,5 +64,15 @@ public class CertificateRequestDto {
 
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    // Hàm validate date thủ công
+    public static boolean validateCertificateDates(LocalDate issueDate, LocalDate expiryDate) {
+        if (issueDate == null || expiryDate == null) {
+            return true;
+        }
+
+        // Kiểm tra ngày cấp không được sau ngày hết hạn
+        return !issueDate.isAfter(expiryDate);
     }
 }

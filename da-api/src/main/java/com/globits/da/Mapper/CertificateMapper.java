@@ -20,7 +20,6 @@ public class CertificateMapper {
         this.provinceRepository = provinceRepository;
     }
 
-    // Chuyển đổi từ CertificateRequestDto sang Certificate entity
     public Certificate toEntity(CertificateRequestDto dto) {
         if (dto == null) {
             return null;
@@ -40,7 +39,6 @@ public class CertificateMapper {
         return certificate;
     }
 
-    // Chuyển đổi từ Certificate entity sang CertificateResponseDto
     public CertificateResponseDto toDto(Certificate certificate) {
         if (certificate == null) {
             return null;
@@ -53,7 +51,6 @@ public class CertificateMapper {
         dto.setIssueDate(certificate.getIssueDate());
         dto.setExpiryDate(certificate.getExpiryDate());
 
-        // Nếu certificate có Province, chuyển đổi Province thành DTO và thêm vào response DTO
         if (certificate.getProvince() != null) {
             Province province = certificate.getProvince();
             ProvinceResponseDto provinceDto = new ProvinceResponseDto();
@@ -66,7 +63,6 @@ public class CertificateMapper {
         return dto;
     }
 
-    // Chuyển đổi danh sách Certificate entities sang danh sách CertificateResponseDtos
     public List<CertificateResponseDto> toDtoList(List<Certificate> certificates) {
         if (certificates == null) {
             return new ArrayList<>();
@@ -85,7 +81,6 @@ public class CertificateMapper {
         return result;
     }
 
-    // Cập nhật entity Certificate từ CertificateRequestDto
     public void updateEntityFromDto(CertificateRequestDto dto, Certificate certificate) {
         if (dto != null) {
             certificate.setName(dto.getName());
@@ -93,7 +88,6 @@ public class CertificateMapper {
             certificate.setIssueDate(dto.getIssueDate());
             certificate.setExpiryDate(dto.getExpiryDate());
 
-            // Kiểm tra ProvinceId và cập nhật province nếu cần
             if (dto.getProvinceId() != null) {
                 provinceRepository.findById(dto.getProvinceId()).ifPresent(certificate::setProvince);
             }

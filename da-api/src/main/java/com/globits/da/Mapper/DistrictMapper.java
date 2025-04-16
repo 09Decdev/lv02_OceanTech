@@ -6,9 +6,7 @@ import com.globits.da.dto.request.CommuneRequestDto;
 import com.globits.da.dto.request.DistrictRequestDto;
 import com.globits.da.dto.response.CommuneResponseDto;
 import com.globits.da.dto.response.DistrictResponseDto;
-import com.globits.da.repository.CommuneRepository;
 import com.globits.da.repository.ProvinceRepository;
-import org.aspectj.weaver.ast.Var;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -33,12 +31,12 @@ public class DistrictMapper {
         district.setName(dto.getName());
         district.setCode(dto.getCode());
 
-        if(dto.getProvinceId()!=null){
+        if (dto.getProvinceId() != null) {
             provinceRepository.findById(dto.getProvinceId()).ifPresent(district::setProvince);
         }
 
         if (dto.getCommuneId() != null) {
-            List<Commune>communeList=new ArrayList<>();
+            List<Commune> communeList = new ArrayList<>();
             for (CommuneRequestDto commune : dto.getCommuneId()) {
                 Commune commune1 = communeMapper.toEntity(commune);
                 commune1.setDistrict(district);

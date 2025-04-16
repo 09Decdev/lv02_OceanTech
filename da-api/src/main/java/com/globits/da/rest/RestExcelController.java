@@ -11,14 +11,16 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/api/excel")
 public class RestExcelController {
     private ExcelExportService excelExportService;
+
     public RestExcelController(ExcelExportService excelExportService) {
         this.excelExportService = excelExportService;
     }
+
     @GetMapping("/export")
-    public void exportExcel(HttpServletResponse response)throws Exception {
+    public void exportExcel(HttpServletResponse response) throws Exception {
         response.setContentType("application/vnd.ms-excel");
         String headerKey = "Content-Disposition";
-        String headerValue="attachment,filename=employees.xls";
+        String headerValue = "attachment,filename=employees.xls";
         response.setHeader(headerKey, headerValue);
         excelExportService.exportToExcel(response);
     }

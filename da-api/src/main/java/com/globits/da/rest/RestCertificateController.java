@@ -34,7 +34,7 @@ public class RestCertificateController {
     }
 
     @PostMapping("/create")
-    public ApiResponse<CertificateResponseDto> createCertificate( @Valid @RequestBody CertificateRequestDto certificate) {
+    public ApiResponse<CertificateResponseDto> createCertificate(@Valid @RequestBody CertificateRequestDto certificate) {
         ApiResponse<CertificateResponseDto> result = new ApiResponse<>();
         result.setData(certificateService.save(certificate));
         return result;
@@ -42,7 +42,7 @@ public class RestCertificateController {
 
     @PutMapping("/{id}")
     public ApiResponse<CertificateResponseDto> updateCertificate(@PathVariable Long id,
-                                                                @Valid @RequestBody CertificateRequestDto certificate) {
+                                                                 @Valid @RequestBody CertificateRequestDto certificate) {
         ApiResponse<CertificateResponseDto> result = new ApiResponse<>();
         result.setData(certificateService.update(id, certificate));
         return result;

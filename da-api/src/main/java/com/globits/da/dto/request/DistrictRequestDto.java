@@ -1,9 +1,7 @@
 package com.globits.da.dto.request;
 
-import com.globits.da.domain.entity.Commune;
-import com.globits.da.domain.entity.Province;
+//import com.globits.da.domain.entity.Commune;
 
-import javax.persistence.*;
 import java.util.List;
 
 public class DistrictRequestDto {

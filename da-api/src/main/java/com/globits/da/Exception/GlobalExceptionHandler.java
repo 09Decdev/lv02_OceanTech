@@ -70,7 +70,7 @@ public class GlobalExceptionHandler {
         log.error("DataIntegrityViolationException: {}", ex.getMessage());
         ApiResponse apiResponse = new ApiResponse();
         apiResponse.setCode(ErrorCode.INVALID_KEY.getCode());
-        apiResponse.setMessage(ErrorCode.INVALID_KEY.getMessage());
+        apiResponse.setMessage(ex.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
@@ -78,8 +78,8 @@ public class GlobalExceptionHandler {
     ResponseEntity handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException ex){
         log.error("SQLIntegrityConstraintViolationException: {}", ex.getMessage());
         ApiResponse apiResponse = new ApiResponse();
-        apiResponse.setCode(ErrorCode.INVALID_KEY.getCode());
-        apiResponse.setMessage(ErrorCode.INVALID_KEY.getMessage());
+        apiResponse.setCode(ErrorCode.BAD_REQUEST.getCode());
+        apiResponse.setMessage(ex.getMessage());
         return ResponseEntity.badRequest().body(apiResponse);
     }
 

@@ -3,7 +3,6 @@ package com.globits.da.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 
-//@Data
 @Getter
 @Setter
 @AllArgsConstructor
