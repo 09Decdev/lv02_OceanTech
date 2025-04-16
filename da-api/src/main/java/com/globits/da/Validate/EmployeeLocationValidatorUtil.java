@@ -1,4 +1,4 @@
-package com.globits.da.domain.Validate;
+package com.globits.da.Validate;
 
 import com.globits.da.domain.entity.Commune;
 import com.globits.da.domain.entity.District;

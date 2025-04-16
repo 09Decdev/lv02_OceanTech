@@ -3,7 +3,7 @@ package com.globits.da.service.impl;
 import com.globits.core.service.impl.GenericServiceImpl;
 import com.globits.da.Mapper.CertificateMapper;
 import com.globits.da.Mapper.EmployeeMapper;
-import com.globits.da.domain.Validate.EmployeeLocationValidatorUtil;
+import com.globits.da.Validate.EmployeeLocationValidatorUtil;
 import com.globits.da.domain.entity.*;
 import com.globits.da.dto.request.EmployeeRequestDto;
 import com.globits.da.dto.response.EmployeeResponseDto;
