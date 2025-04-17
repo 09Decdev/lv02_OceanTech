@@ -1,4 +1,4 @@
-package com.globits.da.Mapper;
+package com.globits.da.mapper;
 
 import com.globits.da.domain.entity.Certificate;
 import com.globits.da.domain.entity.Province;

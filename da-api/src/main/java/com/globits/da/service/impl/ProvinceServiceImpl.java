@@ -1,12 +1,13 @@
 package com.globits.da.service.impl;
 
 import com.globits.core.service.impl.GenericServiceImpl;
-import com.globits.da.Mapper.ProvincesMapper;
+import com.globits.da.exception.DuplicateEntryException;
+import com.globits.da.exception.ProvinceNotFoundException;
+import com.globits.da.mapper.ProvincesMapper;
 import com.globits.da.domain.entity.District;
 import com.globits.da.domain.entity.Province;
 import com.globits.da.dto.response.ProvinceResponseDto;
 import com.globits.da.repository.ProvinceRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,10 +17,14 @@ import java.util.stream.Collectors;
 
 @Service
 public class ProvinceServiceImpl extends GenericServiceImpl<Province, Long> implements com.globits.da.service.ProvinceService {
-    @Autowired
-    private ProvinceRepository provinceRepository;
-    @Autowired
-    private ProvincesMapper provincesMapper;
+
+    private final ProvinceRepository provinceRepository;
+    private final ProvincesMapper provincesMapper;
+
+    public ProvinceServiceImpl(ProvinceRepository provinceRepository, ProvincesMapper provincesMapper) {
+        this.provinceRepository = provinceRepository;
+        this.provincesMapper = provincesMapper;
+    }
 
 
     @Override
@@ -31,7 +36,7 @@ public class ProvinceServiceImpl extends GenericServiceImpl<Province, Long> impl
     @Override
     public ProvinceResponseDto getProvinceById(Long id) {
         Province province = provinceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found Province with id " + id));
+                .orElseThrow(() -> new ProvinceNotFoundException( id));
         return provincesMapper.toDto(province);
     }
 
@@ -39,7 +44,7 @@ public class ProvinceServiceImpl extends GenericServiceImpl<Province, Long> impl
     public Province createProvince(Province province, List<District> districts) {
         boolean existsByCode = provinceRepository.existsByCode(province.getCode());
         if (existsByCode) {
-            throw new RuntimeException("Province code already exists");
+            throw new DuplicateEntryException("Province code already exists");
         }
         if (districts != null) {
             for (District district : districts) {
@@ -53,10 +58,10 @@ public class ProvinceServiceImpl extends GenericServiceImpl<Province, Long> impl
     @Override
     public Province updateProvince(Long id, Province provinceUpdate, List<District> updateDistricts) {
         Province existing = provinceRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Not found Province with id " + id));
+                .orElseThrow(() -> new ProvinceNotFoundException( id));
         boolean existsByCode = provinceRepository.existsByCode(provinceUpdate.getCode());
         if (existsByCode) {
-            throw new RuntimeException("Province code already exists");
+            throw new DuplicateEntryException("Province code already exists");
         }
 
         existing.setName(provinceUpdate.getName());

@@ -2,10 +2,6 @@ package com.globits.da.dto.response;
 
 import java.util.List;
 
-//@Getter
-//@Setter
-//@NoArgsConstructor
-//@AllArgsConstructor
 public class DistrictResponseDto {
     private Long id;
     private String code;
@@ -15,12 +11,6 @@ public class DistrictResponseDto {
     public DistrictResponseDto() {
     }
 
-    public DistrictResponseDto(Long id, String code, String name, List<CommuneResponseDto> communes) {
-        this.id = id;
-        this.code = code;
-        this.name = name;
-        this.communes = communes;
-    }
 
     public Long getId() {
         return id;

@@ -1,6 +1,6 @@
 package com.globits.da.rest;
 
-import com.globits.da.Mapper.CommuneMapper;
+import com.globits.da.mapper.CommuneMapper;
 import com.globits.da.domain.entity.Commune;
 import com.globits.da.dto.request.CommuneRequestDto;
 import com.globits.da.dto.response.ApiResponse;

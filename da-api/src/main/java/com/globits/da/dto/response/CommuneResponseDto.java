@@ -1,9 +1,5 @@
 package com.globits.da.dto.response;
 
-//@Getter
-//@Setter
-//@AllArgsConstructor
-//@NoArgsConstructor
 public class CommuneResponseDto {
     private Long id;
     private String code;

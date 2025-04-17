@@ -2,7 +2,6 @@ package com.globits.da.dto.response;
 
 import com.globits.da.domain.entity.Employee;
 
-import javax.validation.constraints.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,18 +18,18 @@ public class EmployeeResponseDto {
     private String communeName;
     private List<CertificateResponseDto> certificates;
 
-    public EmployeeResponseDto(Employee employee){
-        if (employee!=null){
-            this.id=employee.getId();
-            this.code=employee.getCode();
-            this.name=employee.getName();
-            this.email=employee.getEmail();
-            this.phone=employee.getPhone();
-            this.age=employee.getAge();
-            this.communeName=employee.getCommune().getName();
-            this.districtName=employee.getDistrict().getName();
-            this.provinceName=employee.getProvince().getName();
-            if (employee.getCertificate() != null && !employee.getCertificate().isEmpty()){
+    public EmployeeResponseDto(Employee employee) {
+        if (employee != null) {
+            this.id = employee.getId();
+            this.code = employee.getCode();
+            this.name = employee.getName();
+            this.email = employee.getEmail();
+            this.phone = employee.getPhone();
+            this.age = employee.getAge();
+            this.communeName = employee.getCommune().getName();
+            this.districtName = employee.getDistrict().getName();
+            this.provinceName = employee.getProvince().getName();
+            if (employee.getCertificate() != null && !employee.getCertificate().isEmpty()) {
                 this.certificates = employee.getCertificate()
                         .stream()
                         .map(CertificateResponseDto::new)

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.util.List;
 
 @Service
@@ -18,7 +19,7 @@ public class ExcelExportService {
         this.employeeRepository = employeeRepository;
     }
 
-    public void exportToExcel(HttpServletResponse response)throws Exception {
+    public void exportToExcel(HttpServletResponse response)throws IOException {
         List<Employee> getEmployees = employeeRepository.findAll();
 
         HSSFWorkbook workbook = new HSSFWorkbook();

@@ -1,6 +1,6 @@
 package com.globits.da.rest;
 
-import com.globits.da.Mapper.ProvincesMapper;
+import com.globits.da.mapper.ProvincesMapper;
 import com.globits.da.domain.entity.Province;
 import com.globits.da.dto.request.ProvinceRequestDto;
 import com.globits.da.dto.response.ApiResponse;

@@ -20,9 +20,6 @@ public class CertificateRequestDto {
 
     private Long provinceId;
 
-    public CertificateRequestDto(String name, LocalDate expiryDate, LocalDate issueDate, String issuingOrganization) {
-    }
-
     public CertificateRequestDto() {
     }
 
@@ -66,13 +63,11 @@ public class CertificateRequestDto {
         this.expiryDate = expiryDate;
     }
 
-    // Hàm validate date thủ công
     public static boolean validateCertificateDates(LocalDate issueDate, LocalDate expiryDate) {
         if (issueDate == null || expiryDate == null) {
             return true;
         }
 
-        // Kiểm tra ngày cấp không được sau ngày hết hạn
         return !issueDate.isAfter(expiryDate);
     }
 }

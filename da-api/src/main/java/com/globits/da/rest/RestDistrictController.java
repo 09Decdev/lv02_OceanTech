@@ -1,6 +1,6 @@
 package com.globits.da.rest;
 
-import com.globits.da.Mapper.DistrictMapper;
+import com.globits.da.mapper.DistrictMapper;
 import com.globits.da.domain.entity.District;
 import com.globits.da.dto.request.DistrictRequestDto;
 import com.globits.da.dto.response.ApiResponse;

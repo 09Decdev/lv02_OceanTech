@@ -1,6 +1,6 @@
 package com.globits.da.rest;
 
-import com.globits.da.Mapper.EmployeeMapper;
+import com.globits.da.mapper.EmployeeMapper;
 import com.globits.da.domain.entity.Employee;
 import com.globits.da.dto.request.EmployeeRequestDto;
 import com.globits.da.dto.response.ApiResponse;
