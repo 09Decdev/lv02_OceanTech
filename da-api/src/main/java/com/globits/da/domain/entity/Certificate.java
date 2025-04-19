@@ -31,6 +31,10 @@ public class Certificate {
     @JoinColumn(name ="province_id")
     private Province province;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "certificateType_id",nullable = false)
+    private CertificateType certificateType;
+
     public Certificate() {
     }
     public Certificate(Long id, String name, String issuingOrganization, LocalDate issueDate, LocalDate expiryDate) {
@@ -97,6 +101,14 @@ public class Certificate {
 
     public void setProvince(Province province) {
         this.province = province;
+    }
+
+    public CertificateType getCertificateType() {
+        return certificateType;
+    }
+
+    public void setCertificateType(CertificateType certificateType) {
+        this.certificateType = certificateType;
     }
 }
 

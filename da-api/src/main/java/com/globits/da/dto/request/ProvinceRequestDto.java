@@ -1,12 +1,16 @@
 package com.globits.da.dto.request;
 
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 public class ProvinceRequestDto {
     private Long id;
-  private String code;
-  private String name;
-  private List<DistrictRequestDto> districtId;
+    @NotBlank(message = "Mã tỉnh không được để trống")
+    private String code;
+
+    @NotBlank(message = "Tên tỉnh không được để trống")
+    private String name;
+    private List<DistrictRequestDto> districtId;
 
 
     public Long getId() {

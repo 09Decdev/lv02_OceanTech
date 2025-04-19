@@ -1,12 +1,11 @@
 package com.globits.da.rest;
 
-import com.globits.da.mapper.CommuneMapper;
 import com.globits.da.domain.entity.Commune;
 import com.globits.da.dto.request.CommuneRequestDto;
 import com.globits.da.dto.response.ApiResponse;
 import com.globits.da.dto.response.CommuneResponseDto;
+import com.globits.da.mapper.CommuneMapper;
 import com.globits.da.service.CommuneService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,11 +13,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/commune")
 public class RestCommuneController {
-    @Autowired
-    private CommuneService communeService;
 
-    @Autowired
-    private CommuneMapper communeMapper;
+    private final CommuneService communeService;
+
+    private final CommuneMapper communeMapper;
+
+    public RestCommuneController(CommuneService communeService, CommuneMapper communeMapper) {
+        this.communeService = communeService;
+        this.communeMapper = communeMapper;
+    }
 
     @GetMapping
     public ApiResponse<List<CommuneResponseDto>> getAllCommune() {
@@ -32,9 +35,7 @@ public class RestCommuneController {
     @GetMapping("/{id}")
     public ApiResponse<CommuneResponseDto> getCommune(@PathVariable Long id) {
         ApiResponse<CommuneResponseDto> result = new ApiResponse<>();
-        Commune commune = communeService.findCommune(id);
-        CommuneResponseDto communeDto = communeMapper.toDto(commune);
-        result.setData(communeDto);
+        result.setData(communeService.findCommune(id));
 
         return result;
     }
@@ -42,10 +43,7 @@ public class RestCommuneController {
     @PostMapping("create")
     public ApiResponse<CommuneResponseDto> saveCommune(@RequestBody CommuneRequestDto communeRequestDto) {
         ApiResponse<CommuneResponseDto> result = new ApiResponse<>();
-        Commune commune = communeMapper.toEntity(communeRequestDto);
-        Commune communeSaved = communeService.saveCommune(commune);
-        CommuneResponseDto communeResponseDto = communeMapper.toDto(communeSaved);
-        result.setData(communeResponseDto);
+        result.setData(communeService.saveCommune(communeRequestDto));
 
         return result;
     }
@@ -53,10 +51,7 @@ public class RestCommuneController {
     @PutMapping("/{id}")
     public ApiResponse<CommuneResponseDto> updateCommune(@RequestBody CommuneRequestDto dto, @PathVariable Long id) {
         ApiResponse<CommuneResponseDto> result = new ApiResponse<>();
-        Commune commune = communeMapper.toEntity(dto);
-        Commune updatCommune = communeService.updateCommune(id, commune);
-        CommuneResponseDto communeResponseDto = communeMapper.toDto(updatCommune);
-        result.setData(communeResponseDto);
+        result.setData(communeService.updateCommune(id,dto));
 
         return result;
     }

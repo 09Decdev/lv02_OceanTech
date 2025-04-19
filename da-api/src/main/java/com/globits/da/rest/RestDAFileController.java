@@ -16,13 +16,17 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/dafile")
 public class RestDAFileController {
-    @Autowired
-    private Environment env;
-    @Autowired
-    FileDescriptionService fileDescriptionService;
+
+    private final Environment env;
+
+    private final FileDescriptionService fileDescriptionService;
+
+    public RestDAFileController(Environment env, FileDescriptionService fileDescriptionService) {
+        this.env = env;
+        this.fileDescriptionService = fileDescriptionService;
+    }
 
     @RequestMapping(value = "/image", method = RequestMethod.POST)
-    @ResponseBody
     public ResponseEntity<FileDescriptionDto> uploadAttachment(@RequestParam("uploadfile") MultipartFile uploadfile) {
         FileDescriptionDto result = null;
         String path = "";

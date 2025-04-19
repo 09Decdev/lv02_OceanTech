@@ -10,8 +10,16 @@ import java.util.List;
 
 public interface ProvinceService extends GenericService<Province, Long> {
     List<ProvinceResponseDto> getAllProvinces();
+
     ProvinceResponseDto getProvinceById(Long id);
-    Province createProvince(Province province, List<District>districts);
-    Province updateProvince(Long id, Province provinceUpdate,List<District>updateDistricts);
+
+    ProvinceResponseDto createProvince(Province province, List<District> districts);
+
+    ProvinceResponseDto updateProvince(Long id, Province provinceUpdate, List<District> updateDistricts);
+
     void deleteProvince(Long id);
+
+    ProvinceResponseDto createdProvince(ProvinceRequestDto provinceRequestDto);
+
+    ProvinceResponseDto updatedProvince(Long id, ProvinceRequestDto provinceRequestDto);
 }

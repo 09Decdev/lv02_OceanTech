@@ -1,14 +1,20 @@
 package com.globits.da.service.impl;
 
 import com.globits.core.service.impl.GenericServiceImpl;
-import com.globits.da.exception.DistrictNotFoundException;
-import com.globits.da.exception.DuplicateEntryException;
-import com.globits.da.mapper.DistrictMapper;
 import com.globits.da.domain.entity.Commune;
 import com.globits.da.domain.entity.District;
+import com.globits.da.domain.entity.Province;
+import com.globits.da.dto.request.CommuneRequestDto;
+import com.globits.da.dto.request.DistrictRequestDto;
 import com.globits.da.dto.response.DistrictResponseDto;
+import com.globits.da.exception.DistrictNotFoundException;
+import com.globits.da.exception.DuplicateEntryException;
+import com.globits.da.exception.ProvinceNotFoundException;
+import com.globits.da.mapper.CommuneMapper;
+import com.globits.da.mapper.DistrictMapper;
 import com.globits.da.repository.CommuneRepository;
 import com.globits.da.repository.DistrictRepository;
+import com.globits.da.repository.ProvinceRepository;
 import com.globits.da.service.DistrictService;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +30,15 @@ public class DistrictServiceImpl extends GenericServiceImpl<District, Long> impl
     private final DistrictMapper districtMapper;
 
     private final CommuneRepository communeRepository;
+    private final CommuneMapper communeMapper;
+    private final ProvinceRepository provinceRepository;
 
-    public DistrictServiceImpl(DistrictRepository districtRepository, DistrictMapper districtMapper, CommuneRepository communeRepository) {
+    public DistrictServiceImpl(DistrictRepository districtRepository, DistrictMapper districtMapper, CommuneRepository communeRepository, CommuneMapper communeMapper, ProvinceRepository provinceRepository) {
         this.districtRepository = districtRepository;
         this.districtMapper = districtMapper;
         this.communeRepository = communeRepository;
+        this.communeMapper = communeMapper;
+        this.provinceRepository = provinceRepository;
     }
 
     @Override
@@ -45,27 +55,44 @@ public class DistrictServiceImpl extends GenericServiceImpl<District, Long> impl
     }
 
     @Override
-    public District addNewDistrict(District district, List<Commune> communeList) {
-        if (communeList != null) {
-            if (districtRepository.existsByCode(district.getCode())) {
-                throw new DuplicateEntryException("District code already exists: " + district.getCode());
-            }
-            if (districtRepository.existsByName(district.getName())) {
-                throw new DuplicateEntryException("District name already exists: " + district.getName());
-            }
-            for (Commune commune : communeList) {
-                if (communeRepository.existsByCode(commune.getCode())) {
-                    throw new DuplicateEntryException("Commune code already exists: " + commune.getCode());
-                }
-                if (communeRepository.existsByName(commune.getName())) {
-                    throw new DuplicateEntryException("Commune name already exists: " + commune.getName());
-                }
-                commune.setDistrict(district);
-            }
+    public DistrictResponseDto addNewDistrict(DistrictRequestDto dto) {
+
+        if (districtRepository.existsByCode(dto.getCode())) {
+            throw new DuplicateEntryException("District code already exists: " + dto.getCode());
+        }
+        if (districtRepository.existsByName(dto.getName())) {
+            throw new DuplicateEntryException("District name already exists: " + dto.getName());
+        }
+        Province province = provinceRepository.findById(dto.getProvinceId())
+                .orElseThrow(() -> new ProvinceNotFoundException(dto.getProvinceId()));
+
+        District district = new District();
+        district.setName(dto.getName());
+        district.setCode(dto.getCode());
+        district.setProvince(province);
+
+        List<CommuneRequestDto> communeDtoList = dto.getCommuneId();
+        if (communeDtoList != null && !communeDtoList.isEmpty()) {
+            List<Commune> communeList = communeDtoList.stream()
+                    .map(communeDto -> {
+                        if (communeRepository.existsByCode(communeDto.getCode())) {
+                            throw new DuplicateEntryException("Commune code already exists: " + communeDto.getCode());
+                        }
+                        if (communeRepository.existsByName(communeDto.getName())) {
+                            throw new DuplicateEntryException("Commune name already exists: " + communeDto.getName());
+                        }
+                        Commune commune = communeMapper.toEntity(communeDto);
+                        commune.setDistrict(district);
+                        return commune;
+                    }).collect(Collectors.toList());
+
             district.setCommunes(communeList);
         }
-        return districtRepository.save(district);
+
+        District savedDistrict = districtRepository.save(district);
+        return districtMapper.toDto(savedDistrict);
     }
+
 
     @Override
     public void removeDistrict(Long id) {
@@ -75,64 +102,53 @@ public class DistrictServiceImpl extends GenericServiceImpl<District, Long> impl
     }
 
     @Override
-    public District updateDistrict(Long id, District updateDistrict, List<Commune> communeList) {
+    public DistrictResponseDto updateDistrict(Long id, DistrictRequestDto dto) {
         District existingDistrict = districtRepository.findById(id)
                 .orElseThrow(() -> new DistrictNotFoundException(id));
 
-        updateDistrictDetails(existingDistrict, updateDistrict);
+        existingDistrict.setName(dto.getName());
+        existingDistrict.setCode(dto.getCode());
 
-        if (communeList != null) {
-            validateAndUpdateCommunes(communeList, existingDistrict);
-        }
+        if (dto.getCommuneId() != null && !dto.getCommuneId().isEmpty()) {
+            List<Commune> currentCommunes = existingDistrict.getCommunes();
+            Map<Long, Commune> currentCommuneMap = currentCommunes.stream()
+                    .filter(c -> c.getId() != null)
+                    .collect(Collectors.toMap(Commune::getId, c -> c));
 
-        return districtRepository.save(existingDistrict);
-    }
+            List<Commune> finalCommunes = new ArrayList<>();
 
-    private void updateDistrictDetails(District existingDistrict, District updateDistrict) {
-        existingDistrict.setName(updateDistrict.getName());
-        existingDistrict.setCode(updateDistrict.getCode());
-    }
+            for (CommuneRequestDto communeDto : dto.getCommuneId()) {
+                if (communeDto.getId() == null) {
+                    if (communeRepository.existsByCode(communeDto.getCode())) {
+                        throw new DuplicateEntryException("Commune code already exists: " + communeDto.getCode());
+                    }
+                    if (communeRepository.existsByName(communeDto.getName())) {
+                        throw new DuplicateEntryException("Commune name already exists: " + communeDto.getName());
+                    }
 
-    private void validateAndUpdateCommunes(List<Commune> communeList, District existingDistrict) {
-        List<Commune> currentCommunes = existingDistrict.getCommunes();
-        Map<Long, Commune> currentCommuneMap = currentCommunes.stream()
-                .filter(c -> c.getId() != null)
-                .collect(Collectors.toMap(Commune::getId, c -> c));
-
-        List<Commune> finalCommunes = new ArrayList<>();
-
-        for (Commune commune : communeList) {
-            if (commune.getId() == null) {
-                validateNewCommune(commune);
-                commune.setDistrict(existingDistrict);
-                finalCommunes.add(commune);
-            } else {
-                updateExistingCommune(commune, currentCommuneMap, finalCommunes);
+                    Commune newCommune = new Commune();
+                    newCommune.setName(communeDto.getName());
+                    newCommune.setCode(communeDto.getCode());
+                    newCommune.setDistrict(existingDistrict);
+                    finalCommunes.add(newCommune);
+                } else {
+                    Commune existingCommune = currentCommuneMap.get(communeDto.getId());
+                    if (existingCommune != null) {
+                        existingCommune.setName(communeDto.getName());
+                        existingCommune.setCode(communeDto.getCode());
+                        finalCommunes.add(existingCommune);
+                        currentCommuneMap.remove(existingCommune.getId());
+                    } else {
+                        throw new DuplicateEntryException("Commune ID " + communeDto.getId() + " does not exist for update!");
+                    }
+                }
             }
+
+            existingDistrict.setCommunes(finalCommunes);
         }
 
-        existingDistrict.setCommunes(finalCommunes);
-    }
-
-    private void validateNewCommune(Commune commune) {
-        if (communeRepository.existsByCode(commune.getCode())) {
-            throw new DuplicateEntryException("Commune code already exists: " + commune.getCode());
-        }
-        if (communeRepository.existsByName(commune.getName())) {
-            throw new DuplicateEntryException("Commune name already exists: " + commune.getName());
-        }
-    }
-
-    private void updateExistingCommune(Commune commune, Map<Long, Commune> currentCommuneMap, List<Commune> finalCommunes) {
-        Commune existingCommune = currentCommuneMap.get(commune.getId());
-        if (existingCommune != null) {
-            existingCommune.setName(commune.getName());
-            existingCommune.setCode(commune.getCode());
-            finalCommunes.add(existingCommune);
-            currentCommuneMap.remove(existingCommune.getId());
-        } else {
-            throw new DuplicateEntryException("Commune ID " + commune.getId() + " does not exist for update!");
-        }
+        District updatedDistrict = districtRepository.save(existingDistrict);
+        return districtMapper.toDto(updatedDistrict);
     }
 
 

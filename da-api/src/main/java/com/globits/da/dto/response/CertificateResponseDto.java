@@ -17,6 +17,8 @@ public class CertificateResponseDto {
 
     private ProvinceResponseDto provinceDto;
 
+    private CertificateTypeResponseDto certificateTypeRespon;
+
     public CertificateResponseDto() {
 
     }
@@ -75,5 +77,13 @@ public class CertificateResponseDto {
 
     public void setExpiryDate(LocalDate expiryDate) {
         this.expiryDate = expiryDate;
+    }
+
+    public CertificateTypeResponseDto getCertificateTypeRespon() {
+        return certificateTypeRespon;
+    }
+
+    public void setCertificateTypeRespon(CertificateTypeResponseDto certificateTypeRespon) {
+        this.certificateTypeRespon = certificateTypeRespon;
     }
 }

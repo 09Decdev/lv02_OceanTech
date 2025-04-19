@@ -6,20 +6,21 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.springframework.stereotype.Service;
+
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.util.List;
 
 @Service
 public class ExcelExportService {
     private EmployeeRepository employeeRepository;
+
     public ExcelExportService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
 
-    public void exportToExcel(HttpServletResponse response)throws IOException {
+    public void exportToExcel(HttpServletResponse response) throws IOException {
         List<Employee> getEmployees = employeeRepository.findAll();
 
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -42,7 +43,7 @@ public class ExcelExportService {
             dataRow1.createCell(4).setCellValue(employee.getAge());
             dataRow++;
         }
-        ServletOutputStream servletOutputStream=response.getOutputStream();
+        ServletOutputStream servletOutputStream = response.getOutputStream();
         workbook.write(servletOutputStream);
         servletOutputStream.flush();
         servletOutputStream.close();

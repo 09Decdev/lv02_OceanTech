@@ -11,9 +11,14 @@ import java.util.List;
 @Service
 public interface CertificateService {
     CertificateResponseDto save(CertificateRequestDto dto);
+
     CertificateResponseDto update(Long id, CertificateRequestDto dto);
+
     void delete(Long id);
+
     Page<CertificateResponseDto> search(String keyword, Pageable pageable);
+
     CertificateResponseDto getById(Long id);
+
     List<CertificateResponseDto> getAllCertificates();
 }

@@ -1,6 +1,9 @@
 package com.globits.da.dto.request;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.FutureOrPresent;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 import java.time.LocalDate;
 
 public class CertificateRequestDto {
@@ -19,8 +22,10 @@ public class CertificateRequestDto {
     private LocalDate expiryDate;
 
     private Long provinceId;
+    private Long certificateTypeId;
 
     public CertificateRequestDto() {
+
     }
 
     public Long getProvinceId() {
@@ -69,5 +74,13 @@ public class CertificateRequestDto {
         }
 
         return !issueDate.isAfter(expiryDate);
+    }
+
+    public Long getCertificateTypeId() {
+        return certificateTypeId;
+    }
+
+    public void setCertificateTypeId(Long certificateTypeId) {
+        this.certificateTypeId = certificateTypeId;
     }
 }

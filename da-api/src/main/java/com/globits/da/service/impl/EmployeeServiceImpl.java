@@ -1,13 +1,13 @@
 package com.globits.da.service.impl;
 
 import com.globits.core.service.impl.GenericServiceImpl;
-import com.globits.da.exception.*;
-import com.globits.da.mapper.EmployeeMapper;
 import com.globits.da.Validate.EmployeeLocationValidatorUtil;
 import com.globits.da.domain.entity.*;
 import com.globits.da.dto.request.EmployeeRequestDto;
 import com.globits.da.dto.response.EmployeeResponseDto;
 import com.globits.da.dto.response.ImportError;
+import com.globits.da.exception.*;
+import com.globits.da.mapper.EmployeeMapper;
 import com.globits.da.repository.*;
 import com.globits.da.service.EmployeeService;
 import org.apache.poi.ss.usermodel.*;
@@ -67,7 +67,7 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Long> impl
     }
 
     @Override
-    public Employee saveEmployee(EmployeeRequestDto dto) {
+    public EmployeeResponseDto saveEmployee(EmployeeRequestDto dto) {
         if (employeeRepository.existsByCode(dto.getCode())) {
             throw new EmployeeCodeExistsException(dto.getCode());
         }
@@ -75,11 +75,11 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Long> impl
         locationValidator.validate(dto);
 
         Employee employee = employeeMapper.toEntity(dto);
-        return employeeRepository.save(employee);
+        return employeeMapper.toDto(employeeRepository.save(employee));
     }
 
     @Override
-    public Employee updateEmployee(Long id, EmployeeRequestDto dto) {
+    public EmployeeResponseDto updateEmployee(Long id, EmployeeRequestDto dto) {
         Employee existingEmployee = employeeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ErrorCode.Not_Found_EMPLOYEE.getMessage() + id));
 
@@ -90,27 +90,42 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Long> impl
         locationValidator.validate(dto);
 
         employeeMapper.updateEntity(existingEmployee, dto);
-        return employeeRepository.save(existingEmployee);
+        return employeeMapper.toDto(employeeRepository.save(existingEmployee));
     }
 
     @Override
     public Boolean deleteEmployee(Long id) {
-        Employee checkExisting = getEmployee(id);
+        Employee checkExisting = employeeRepository.findById(id)
+                .orElseThrow(() -> new DuplicateEntryException(ErrorCode.Not_Found_EMPLOYEE.getMessage() + id));
         employeeRepository.delete(checkExisting);
         return true;
     }
 
     @Override
-    public Employee getEmployee(Long id) {
-        return employeeRepository.findById(id)
-                .orElseThrow(() -> new EmployeeNotFoundException(id));
+    public EmployeeResponseDto getEmployee(Long id) {
+        return employeeMapper.toDto(employeeRepository.findById(id)
+                .orElseThrow(() -> new EmployeeNotFoundException(id)));
     }
 
     @Override
-    public List<Employee> getEmployees() {
-        return employeeRepository.findAll();
+    public List<EmployeeResponseDto> getEmployees() {
+        List<Employee> employees = employeeRepository.findAll();
+
+        return employees.stream()
+                .map(employeeMapper::toDto)
+                .collect(Collectors.toList());
+
     }
 
+    /**
+     Nghiệp vụ:
+     - Một Employee sẽ có nhiều văn bằng
+     - Mỗi văn bằng sẽ do một tỉnh cấp
+     Yêu cầu:
+     - Thêm văn bằng cho nhân viên - văn bằng sẽ do 1 tỉnh cụ thể cung cấp (1 List)
+     - Nếu Employee đã có  văn bằng A của tỉnh X cung cấp thì không được thêm mới văn bằng A được tỉnh X nếu văn bằng đó còn hiệu lực.
+     - Employee không được có quá 3 văn bằng cùng loại còn hiệu lực (Bất kể tỉnh nào cung cấp)
+     **/
     @Transactional
     public EmployeeResponseDto addCertificate(Long id, List<Long> certificateIds) {
         Employee employee = employeeRepository.findById(id)
@@ -120,16 +135,21 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Long> impl
         List<Certificate> existingCertificates = employee.getCertificate();
 
         for (Certificate newCertificate : certificatesToAdd) {
-            List<Certificate> sameNameCertificates = existingCertificates.stream()
-                    .filter(c -> c.getName().equals(newCertificate.getName()))
+            Optional<Certificate> duplicateValid = findDuplicateValidCertificate(existingCertificates, newCertificate);
+            if (duplicateValid.isPresent()) {
+                throw new DuplicateEntryException("Văn bằng " + newCertificate.getName() + " đã tồn tại và còn thời hạn!");
+            }
+
+            List<Certificate> sameTypeCertificates = existingCertificates.stream()
+                    .filter(c -> c.getCertificateType().equals(newCertificate.getCertificateType()))
                     .collect(Collectors.toList());
 
-            long validCount = sameNameCertificates.stream()
+            long validCount = sameTypeCertificates.stream()
                     .filter(c -> c.getExpiryDate().isAfter(LocalDate.now()))
                     .count();
 
             if (validCount >= 3) {
-                Optional<Certificate> expiredOne = sameNameCertificates.stream()
+                Optional<Certificate> expiredOne = sameTypeCertificates.stream()
                         .filter(c -> c.getExpiryDate().isBefore(LocalDate.now()))
                         .findFirst();
 
@@ -151,6 +171,18 @@ public class EmployeeServiceImpl extends GenericServiceImpl<Employee, Long> impl
         employee = employeeRepository.save(employee);
         return employeeMapper.toDto(employee);
     }
+
+    private Optional<Certificate> findDuplicateValidCertificate(List<Certificate> existingCertificates, Certificate newCertificate) {
+        return existingCertificates.stream()
+                .filter(existing ->
+                        existing.getName().equalsIgnoreCase(newCertificate.getName()) &&
+                                existing.getCertificateType() == newCertificate.getCertificateType() &&
+                                existing.getProvince().getId().equals(newCertificate.getProvince().getId()) &&
+                                existing.getExpiryDate().isAfter(LocalDate.now()) // kiểm tra còn hạn
+                )
+                .findFirst();
+    }
+
 
     @Transactional
     public List<ImportError> importEmployeesFromExcel(MultipartFile file) {

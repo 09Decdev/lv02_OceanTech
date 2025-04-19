@@ -15,8 +15,12 @@ import java.util.List;
 @RequestMapping("/api/certificate")
 @Validated
 public class RestCertificateController {
-    @Autowired
-    private CertificateServiceImpl certificateService;
+
+    private final CertificateServiceImpl certificateService;
+
+    public RestCertificateController(CertificateServiceImpl certificateService) {
+        this.certificateService = certificateService;
+    }
 
     @GetMapping("/{id}")
     public ApiResponse<CertificateResponseDto> getCertificate(@PathVariable Long id) {

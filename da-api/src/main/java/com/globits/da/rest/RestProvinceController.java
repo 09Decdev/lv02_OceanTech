@@ -14,11 +14,14 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/province")
 public class RestProvinceController {
-    @Autowired
-    private ProvinceService provinceService;
+    private final ProvinceService provinceService;
 
-    @Autowired
-    private ProvincesMapper provincesMapper;
+    private final ProvincesMapper provincesMapper;
+
+    public RestProvinceController(ProvinceService provinceService, ProvincesMapper provincesMapper) {
+        this.provinceService = provinceService;
+        this.provincesMapper = provincesMapper;
+    }
 
     @GetMapping
     public ApiResponse<List<ProvinceResponseDto>> getAllProvinces() {
@@ -37,10 +40,7 @@ public class RestProvinceController {
     @PostMapping("/create")
     public ApiResponse<ProvinceResponseDto> createProvince(@RequestBody ProvinceRequestDto provinceRequestDto) {
         ApiResponse<ProvinceResponseDto> result = new ApiResponse<>();
-        Province province = provincesMapper.toEntity(provinceRequestDto);
-        Province created = provinceService.createProvince(province, province.getDistricts());
-        ProvinceResponseDto provinceResponseDto = provincesMapper.toDto(created);
-        result.setData(provinceResponseDto);
+        result.setData(provinceService.createdProvince(provinceRequestDto));
         return result;
     }
 
@@ -48,10 +48,7 @@ public class RestProvinceController {
     public ApiResponse<ProvinceResponseDto> updateProvince(@RequestBody ProvinceRequestDto dto
             , @PathVariable("id") Long id) {
         ApiResponse<ProvinceResponseDto> result = new ApiResponse<>();
-        Province province = provincesMapper.toEntity(dto);
-        Province provinceUpdate = provinceService.updateProvince(id, province, province.getDistricts());
-        ProvinceResponseDto provinceResponseDto = provincesMapper.toDto(provinceUpdate);
-        result.setData(provinceResponseDto);
+        result.setData(provinceService.updatedProvince(id, dto));
         return result;
     }
 

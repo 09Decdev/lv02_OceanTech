@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequestMapping("/api/excel")
 public class RestExcelController {
-    private ExcelExportService excelExportService;
+    private final ExcelExportService excelExportService;
 
     public RestExcelController(ExcelExportService excelExportService) {
         this.excelExportService = excelExportService;

@@ -16,6 +16,7 @@ public enum ErrorCode {
     NOT_FOUND_CERTIFICATE(1009, "Certificate not found with id: ", HttpStatus.NOT_FOUND),
     NOT_FOUND_DISTRICT(1009, "District not found with id: ", HttpStatus.NOT_FOUND),
     NOT_FOUND_COMMUNE(1009, "Commune not found with id: ", HttpStatus.NOT_FOUND),
+    NOT_FOUND_TYPE(1009, "Certificate Type not found with id: ", HttpStatus.NOT_FOUND),
     NOT_FOUND_PROVINCE(1009, "Province not found with id: ", HttpStatus.NOT_FOUND),
     BAD_REQUEST (4000, "Bad Request",HttpStatus.BAD_REQUEST),
     INVALID_KEY (4002, "Dữ liệu không hợp lệ hoặc bị trùng",HttpStatus.BAD_REQUEST)

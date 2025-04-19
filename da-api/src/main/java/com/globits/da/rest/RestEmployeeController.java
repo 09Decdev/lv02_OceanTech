@@ -1,13 +1,12 @@
 package com.globits.da.rest;
 
-import com.globits.da.mapper.EmployeeMapper;
 import com.globits.da.domain.entity.Employee;
 import com.globits.da.dto.request.EmployeeRequestDto;
 import com.globits.da.dto.response.ApiResponse;
 import com.globits.da.dto.response.EmployeeResponseDto;
 import com.globits.da.dto.response.ImportError;
+import com.globits.da.mapper.EmployeeMapper;
 import com.globits.da.service.EmployeeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +19,15 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/employee")
 public class RestEmployeeController {
-    @Autowired
-    private EmployeeService employeeService;
-    @Autowired
-    private EmployeeMapper employeeMapper;
+
+    private final EmployeeService employeeService;
+
+    private final EmployeeMapper employeeMapper;
+
+    public RestEmployeeController(EmployeeService employeeService, EmployeeMapper employeeMapper) {
+        this.employeeService = employeeService;
+        this.employeeMapper = employeeMapper;
+    }
 
     @GetMapping("/{pageIndex}/{pageSize}")
     public ApiResponse<Page<EmployeeResponseDto>> getPage(@PathVariable int pageIndex, @PathVariable int pageSize) {
@@ -38,8 +42,7 @@ public class RestEmployeeController {
     @PostMapping("/create")
     public ApiResponse<EmployeeResponseDto> saveEmployee(@Valid @RequestBody EmployeeRequestDto dto) {
         ApiResponse<EmployeeResponseDto> result = new ApiResponse<>();
-        Employee employee = employeeService.saveEmployee(dto);
-        result.setData(employeeMapper.toDto(employee));
+        result.setData(employeeService.saveEmployee(dto));
         result.setMessage("Success");
 
         return result;
@@ -48,8 +51,7 @@ public class RestEmployeeController {
     @PutMapping("/{id}")
     public ApiResponse<EmployeeResponseDto> updateEmployee(@Valid @RequestBody EmployeeRequestDto dto, @PathVariable Long id) {
         ApiResponse<EmployeeResponseDto> result = new ApiResponse<>();
-        Employee employee = employeeService.updateEmployee(id, dto);
-        result.setData(employeeMapper.toDto(employee));
+        result.setData(employeeService.updateEmployee(id, dto));
         result.setMessage("Successfully updated");
 
         return result;
@@ -77,20 +79,14 @@ public class RestEmployeeController {
     @GetMapping("/{id}")
     public ApiResponse<EmployeeResponseDto> getEmployee(@PathVariable Long id) {
         ApiResponse<EmployeeResponseDto> result = new ApiResponse<>();
-        Employee employee = employeeService.getEmployee(id);
-        result.setData(employeeMapper.toDto(employee));
+        result.setData(employeeService.getEmployee(id));
         return result;
     }
 
     @GetMapping
     public ApiResponse<List<EmployeeResponseDto>> getEmployees() {
         ApiResponse<List<EmployeeResponseDto>> result = new ApiResponse<>();
-        List<Employee> employees = employeeService.getEmployees();
-        List<EmployeeResponseDto> employeeDtos = employees.stream()
-                .map(employeeMapper::toDto)
-                .collect(Collectors.toList());
-        result.setData(employeeDtos);
-
+        result.setData(employeeService.getEmployees());
         return result;
     }
 

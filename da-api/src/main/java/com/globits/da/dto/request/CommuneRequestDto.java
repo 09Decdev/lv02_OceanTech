@@ -1,11 +1,21 @@
 package com.globits.da.dto.request;
 
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 public class CommuneRequestDto {
     private Long id;
+    @NotBlank(message = "Code không được để trống")
     private String code;
+
+    @NotBlank(message = "Name không được để trống")
     private String name;
+
+    @NotNull(message = "DistrictId không được để trống")
     private Long districtId;
+
+
     private Long employeeId;
 
     public CommuneRequestDto() {

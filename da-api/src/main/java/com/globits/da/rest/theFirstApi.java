@@ -18,18 +18,18 @@ import java.util.Iterator;
 @RestController
 @RequestMapping("/api/da")
 public class theFirstApi {
-    @Autowired
-    private MyFirstApiService myFirstApiService;
+    private final MyFirstApiService myFirstApiService;
+
+    public theFirstApi(MyFirstApiService myFirstApiService) {
+        this.myFirstApiService = myFirstApiService;
+    }
 
     @GetMapping
     public String firstGet() {
         return myFirstApiService.myFirstApi();
     }
 
-    //    @PostMapping("creat")
-//    public MyFirstApiDto firstApiDto(@RequestBody MyFirstApiDto dto){
-//        return dto;
-//    }
+
     @PostMapping("creat")
     public MyFirstApiDto firstApiDto(@RequestParam Integer code,
                                      @RequestParam String name,
@@ -41,18 +41,16 @@ public class theFirstApi {
     public String uploadFile(@RequestParam("file") MultipartFile file) throws IOException {
         StringBuilder result = new StringBuilder();
 
-        // Kiểm tra loại file là text hay Excel
         String fileName = file.getOriginalFilename();
         if (fileName.endsWith(".txt")) {
-            // Đọc file text
+
             String content = new String(file.getBytes());
             result.append("Dòng trong file text: \n");
             for (String line : content.split("\n")) {
-                System.out.println(line); // Debug mỗi dòng của file
+                System.out.println(line);
                 result.append(line).append("\n");
             }
         } else if (fileName.endsWith(".xlsx")) {
-            // Đọc file Excel
             InputStream inputStream = file.getInputStream();
             Workbook workbook = new XSSFWorkbook(inputStream);
             Sheet sheet = workbook.getSheetAt(0); // Lấy sheet đầu tiên
@@ -65,10 +63,10 @@ public class theFirstApi {
 
                 while (cellIterator.hasNext()) {
                     Cell cell = cellIterator.next();
-                    System.out.print(cell.toString() + "\t"); // Debug mỗi dòng trong Excel
+                    System.out.print(cell.toString() + "\t");
                     result.append(cell.toString()).append("\t");
                 }
-                System.out.println(); // Print newline for each row in Excel
+                System.out.println();
                 result.append("\n");
             }
             workbook.close();

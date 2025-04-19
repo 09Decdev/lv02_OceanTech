@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MyFirstApiService {
-    public String myFirstApi(){
+    public String myFirstApi() {
         return "MyFirstApiService";
     }
 }

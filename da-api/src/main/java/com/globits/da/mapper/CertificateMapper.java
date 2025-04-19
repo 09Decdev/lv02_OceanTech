@@ -1,10 +1,13 @@
 package com.globits.da.mapper;
 
 import com.globits.da.domain.entity.Certificate;
+import com.globits.da.domain.entity.CertificateType;
 import com.globits.da.domain.entity.Province;
 import com.globits.da.dto.request.CertificateRequestDto;
 import com.globits.da.dto.response.CertificateResponseDto;
+import com.globits.da.dto.response.CertificateTypeResponseDto;
 import com.globits.da.dto.response.ProvinceResponseDto;
+import com.globits.da.repository.CertificateTypeRepository;
 import com.globits.da.repository.ProvinceRepository;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +18,11 @@ import java.util.List;
 public class CertificateMapper {
 
     private final ProvinceRepository provinceRepository;
+    private final CertificateTypeRepository certificateTypeRepository;
 
-    public CertificateMapper(ProvinceRepository provinceRepository) {
+    public CertificateMapper(ProvinceRepository provinceRepository, CertificateTypeRepository certificateTypeRepository) {
         this.provinceRepository = provinceRepository;
+        this.certificateTypeRepository = certificateTypeRepository;
     }
 
     public Certificate toEntity(CertificateRequestDto dto) {
@@ -34,6 +39,9 @@ public class CertificateMapper {
         // Kiểm tra ProvinceId từ dto và tìm Province trong DB
         if (dto.getProvinceId() != null) {
             provinceRepository.findById(dto.getProvinceId()).ifPresent(certificate::setProvince);
+        }
+        if (dto.getCertificateTypeId() != null) {
+            certificateTypeRepository.findById(dto.getCertificateTypeId()).ifPresent(certificate::setCertificateType);
         }
 
         return certificate;
@@ -58,6 +66,14 @@ public class CertificateMapper {
             provinceDto.setName(province.getName());
             provinceDto.setCode(province.getCode());
             dto.setProvinceDto(provinceDto);
+        }
+        if (certificate.getCertificateType() != null) {
+            CertificateType certificateType = certificate.getCertificateType();
+            CertificateTypeResponseDto certificateTypeDto = new CertificateTypeResponseDto();
+            certificateTypeDto.setId(certificateType.getId());
+            certificateTypeDto.setType(certificateType.getType());
+            certificateTypeDto.setDescription(certificateType.getDescription());
+            dto.setCertificateTypeRespon(certificateTypeDto);
         }
 
         return dto;
@@ -90,6 +106,9 @@ public class CertificateMapper {
 
             if (dto.getProvinceId() != null) {
                 provinceRepository.findById(dto.getProvinceId()).ifPresent(certificate::setProvince);
+            }
+            if (dto.getCertificateTypeId() != null) {
+                certificateTypeRepository.findById(dto.getCertificateTypeId()).ifPresent(certificate::setCertificateType);
             }
         }
     }
